@@ -3,25 +3,22 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { signIn, singOut, useSession, getProviders, signOut } from "next-auth/react"
+import { signIn, signOut, useSession, getProviders } from "next-auth/react"
 import Logo from "../public/assets/images/algorithm.png"
 
 const Nav = () => {
-  const isUserLoggedIn = true
-
+  const { data: session } = useSession()
   // login providers such as Google and etc...
   const [ providers, setProviders ] = useState( null )
   const [ toggleDropDown, setToggleDropDown ] = useState( false )
 
   // on load of page
   useEffect( () => {
-    const setProviders = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders()
       setProviders( response )
     }
-    return () => {
-      setProviders()
-    }
+    setUpProviders()
   }, [] )
 
   return (
@@ -39,7 +36,7 @@ const Nav = () => {
 
       {/* Desktop Navigation */ }
       <div className="sm:flex hidden">
-        { isUserLoggedIn ? (
+        { session?.user ? (
           <div className='flex gap-3 md:gap-5'>
             <Link href={ "/create-prompt" } className='black_btn'>
               Create Post
@@ -47,7 +44,7 @@ const Nav = () => {
 
             <button type="button" onClick={ signOut } className='outline_btn'>Sign Out</button>
             <Link href={ "/profile" }>
-              <Image src={ Logo }
+              <Image src={ session?.user.image }
                 width={ 37 }
                 height={ 37 }
                 className='rounded-full'
@@ -67,13 +64,13 @@ const Nav = () => {
           </>
         }
       </div>
-
+        
       {/* Mobile Navigation */ }
       <div className="sm:hidden flex">
-        { isUserLoggedIn ?
+        { session?.user ?
           (
             <div className="flex">
-              <Image src={  Logo }
+              <Image src={ session?.user.image }
                 width={ 37 }
                 height={ 37 }
                 className='rounded-full cursor-pointer'
