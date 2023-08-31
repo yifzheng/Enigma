@@ -39,11 +39,31 @@ const Feed = () => {
     window.debouncedSearchTimeout = setTimeout( () => {
       // check if the search text matches the tag of the prompt or the username
       const filtered = posts.filter( ( post ) => {
-        return post.tag.includes( newSearchText ) || post.creator.username.includes( newSearchText )
+        return post.tag.includes( newSearchText ) || post.creator.username.includes( newSearchText ) || post.prompt.includes( newSearchText )
       } )
       setFilteredPosts( filtered )
 
-    }, 1300 )
+    }, 1000 )
+  }
+
+  // handle tag click
+  const handleTagClick = ( tag ) => {
+    setSearchText( tag )
+
+    //clear existing timeout
+    if ( window.debouncedSearchTimeout ) {
+      clearTimeout( window.debouncedSearchTimeout )
+    }
+
+    // set a new timeout to perform search every 1.3 seconds
+    window.debouncedSearchTimeout = setTimeout( () => {
+      // check if the search text matches the tag of the prompt or the username
+      const filtered = posts.filter( ( post ) => {
+        return post.tag.includes( tag )
+      } )
+      setFilteredPosts( filtered )
+
+    }, 1000 )
   }
 
   // pagination logic
@@ -68,20 +88,21 @@ const Feed = () => {
 
   return (
     <section className="feed">
-      <form className="relative w-full flex-center flex-col">
+      <form className="relative w-full flex-center flex">
         <input
           type="text"
-          placeholder="Search for a tag or a username"
+          placeholder="Search for a prompt, a tag or a username"
           value={ searchText }
           onChange={ handleSearchChange }
           required
           className="search_input peer"
         />
+        <span className="absolute right-2 bg-red-600 text-gray-200 font-inter cursor-pointer p-1 rounded-lg" onClick={ () => setSearchText( '' ) }>Cancel</span>
       </form>
 
       <PromptCardList
         data={ currentPosts }
-        handleTagClick={ () => { } }
+        handleTagClick={ handleTagClick }
       />
 
       <Pagination
