@@ -9,7 +9,7 @@ import Profile from "@components/Profile"
 const UserProfile = () => {
     const { data: session } = useSession()
     const [ posts, setPosts ] = useState( [] )
-
+    const router = useRouter()
     // fetch the data
     useEffect( () => {
         const fetchPosts = async () => {
@@ -21,9 +21,28 @@ const UserProfile = () => {
         if ( session?.user.id ) fetchPosts()
     }, [] )
 
-    const handleEdit = () => { }
+    const handleEdit = ( post ) => {
+        router.push( `/update-prompt?id=${post._id}` )
+    }
 
-    const handleDelete = async () => { }
+    const handleDelete = async (post) => {
+        const hasConfirmed = confirm( "Are you sure you want to delete this prompt?" )
+        // if confirmed
+        if ( hasConfirmed ) {
+            try {
+                // delete psot
+                await fetch( `/api/prompt/${post._id.toString()}`, {
+                    method: 'DELETE'
+                } )
+                // filter out post from state
+                const filteredPosts = posts.filter( ( p ) => p._id !== post._id )
+                // set post
+                setPosts( filteredPosts )
+            } catch ( error ) {
+
+            }
+        }
+    }
 
     return (
         <Profile
