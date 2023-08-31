@@ -1,24 +1,18 @@
-import Head from 'next/head'
 import '@styles/globals.css'
 import Nav from '@components/Nav'
 import Provider from '@components/Provider'
 
 export const metadata = {
     title: "Enigma",
-    description: 'Discover & Share AI Prompts'
+    description: 'Discover & Share AI Prompts',
+    icons: {
+        icon: '/icon?<generated>'
+    } 
 }
 
 const RootLayout = ( { children } ) => {
     return (
         <html lang='en'>
-            <Head>
-                <link
-                    rel="icon"
-                    href="/icon?<generated>"
-                    type="image/<generated>"
-                    sizes="<generated>"
-                />
-            </Head>
             <body>
                 <Provider>
                     <div className="main">
