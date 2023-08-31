@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import PromptCard from "./PromptCard"
+import Pagination from "./Pagination"
 
 const PromptCardList = ( { data, handleTagClick } ) => {
   return (
@@ -21,6 +22,8 @@ const Feed = () => {
   const [ searchText, setSearchText ] = useState( '' )
   const [ posts, setPosts ] = useState( [] )
   const [ filteredPosts, setFilteredPosts ] = useState( [] )
+  const [ currentPage, setCurrentPage ] = useState( 1 )
+  const postsPerPage = 10; // number of posts to display per page
 
   // handle search change
   const handleSearchChange = ( e ) => {
@@ -42,6 +45,15 @@ const Feed = () => {
 
     }, 1300 )
   }
+
+  // pagination logic
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = searchText ? filteredPosts.slice( indexOfFirstPost, indexOfLastPost ) : posts.slice( indexOfFirstPost, indexOfLastPost )
+
+  const paginate = ( pageNumber ) => {
+    setCurrentPage( pageNumber );
+  };
 
   // fetch the data
   useEffect( () => {
@@ -68,8 +80,15 @@ const Feed = () => {
       </form>
 
       <PromptCardList
-        data={ filteredPosts }
+        data={ currentPosts }
         handleTagClick={ () => { } }
+      />
+
+      <Pagination
+        postsPerPage={ postsPerPage }
+        totalPosts={ searchText ? filteredPosts.length : posts.length }
+        paginate={ paginate }
+        currentPage={ currentPage }
       />
     </section>
   )
